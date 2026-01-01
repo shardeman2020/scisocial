@@ -1,0 +1,100 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NEXT_PUBLIC_API_URL = "https://api.scisocial.pro"
+  NEXT_PUBLIC_APP_NAME = "SciSocial"
+  NEXT_PUBLIC_ENV = "production"
+
+[[redirects]]
+  from = "/api/*"
+  to = "https://api.scisocial.pro/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Domain redirects
+[[redirects]]
+  from = "https://www.scisocial.pro/*"
+  to = "https://scisocial.pro/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://scisocial.biz/*"
+  to = "https://scisocial.pro/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.scisocial.biz/*"
+  to = "https://scisocial.pro/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://scisocial.shop/*"
+  to = "https://scisocial.pro/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.scisocial.shop/*"
+  to = "https://scisocial.pro/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://scisocial.store/*"
+  to = "https://scisocial.pro/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.scisocial.store/*"
+  to = "https://scisocial.pro/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://scisocial.us/*"
+  to = "https://scisocial.pro/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.scisocial.us/*"
+  to = "https://scisocial.pro/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://scisocials.com/*"
+  to = "https://scisocial.pro/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.scisocials.com/*"
+  to = "https://scisocial.pro/:splat"
+  status = 301
+  force = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

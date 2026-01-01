@@ -1,0 +1,145 @@
+services:
+  # PostgreSQL Database with pgvector
+  - type: pgsql
+    name: scisocial-db
+    plan: starter
+    databaseName: sci_social_prod
+    user: scisocial_user
+    ipAllowList: []
+
+  # Redis Cache for Bull queues
+  - type: redis
+    name: scisocial-redis
+    plan: starter
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []
+
+  # NestJS Backend API
+  - type: web
+    name: scisocial-api
+    runtime: node
+    region: oregon
+    plan: starter
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /health
+    envVars:
+      # Database (auto-populated from scisocial-db service)
+      - key: DATABASE_URL
+        fromDatabase:
+          name: scisocial-db
+          property: connectionString
+
+      # Parsed database variables (for TypeORM config)
+      - key: DATABASE_HOST
+        fromDatabase:
+          name: scisocial-db
+          property: host
+      - key: DATABASE_PORT
+        fromDatabase:
+          name: scisocial-db
+          property: port
+      - key: DATABASE_USER
+        fromDatabase:
+          name: scisocial-db
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: scisocial-db
+          property: password
+      - key: DATABASE_NAME
+        value: sci_social_prod
+
+      # Redis (auto-populated from scisocial-redis service)
+      - key: REDIS_URL
+        fromService:
+          name: scisocial-redis
+          type: redis
+          property: connectionString
+      - key: REDIS_HOST
+        fromService:
+          name: scisocial-redis
+          type: redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          name: scisocial-redis
+          type: redis
+          property: port
+
+      # Server config
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+
+      # CORS (update after frontend is deployed)
+      - key: CORS_ORIGIN
+        value: https://scisocial.pro,https://www.scisocial.pro,https://admin.scisocial.pro
+
+      # API Keys (ADD THESE MANUALLY IN RENDER DASHBOARD)
+      - key: CROSSREF_API_EMAIL
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+      # Email Configuration (ADD MANUALLY)
+      - key: EMAIL_HOST
+        value: smtp.sendgrid.net
+      - key: EMAIL_PORT
+        value: 587
+      - key: EMAIL_SECURE
+        value: false
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASSWORD
+        sync: false
+      - key: EMAIL_FROM
+        value: noreply@scisocial.pro
+      - key: EMAIL_FROM_NAME
+        value: SciSocial
+
+      # JWT (auto-generated secure secret)
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRATION
+        value: 7d
+
+      # File uploads
+      - key: MAX_FILE_SIZE
+        value: 52428800
+      - key: ALLOWED_IMAGE_TYPES
+        value: image/jpeg,image/png,image/gif,image/webp
+
+      # Weekly digest cron (every Monday at 9 AM UTC)
+      - key: DIGEST_CRON_SCHEDULE
+        value: 0 9 * * 1
+
+      # AI Model
+      - key: ANTHROPIC_MODEL
+        value: claude-3-5-sonnet-20241022
+
+      # Rate limiting
+      - key: RATE_LIMIT_TTL
+        value: 60
+      - key: RATE_LIMIT_MAX
+        value: 100
+
+      # Logging
+      - key: LOG_LEVEL
+        value: info
+
+      # Application URLs
+      - key: FRONTEND_URL
+        value: https://scisocial.pro
+      - key: ADMIN_URL
+        value: https://admin.scisocial.pro
+      - key: BACKEND_URL
+        value: https://scisocial-api.onrender.com
+
+# After deployment:
+# 1. Open Render Shell for scisocial-api
+# 2. Install pgvector extension:
+#    npm run ts-node -e "const { Client } = require('pg'); const client = new Client(process.env.DATABASE_URL); client.connect().then(() => client.query('CREATE EXTENSION IF NOT EXISTS vector')).then(() => client.end());"
+# 3. Run migrations (if you have them)
+# 4. Generate embeddings: npm run generate:embeddings
