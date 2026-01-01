@@ -11,6 +11,7 @@ services:
     name: scisocial-redis
     plan: free
     maxmemoryPolicy: allkeys-lru
+    ipAllowList: []
 
   # NestJS Backend API
   - type: web
