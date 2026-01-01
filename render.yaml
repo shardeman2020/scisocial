@@ -1,25 +1,23 @@
 databases:
   # PostgreSQL Database with pgvector
   - name: scisocial-db
-    plan: starter
+    plan: free
     databaseName: sci_social_prod
     user: scisocial_user
-    ipAllowList: []
 
 services:
   # Redis Cache for Bull queues
   - type: redis
     name: scisocial-redis
-    plan: starter
+    plan: free
     maxmemoryPolicy: allkeys-lru
-    ipAllowList: []
 
   # NestJS Backend API
   - type: web
     name: scisocial-api
     runtime: node
     region: oregon
-    plan: starter
+    plan: free
     rootDir: backend
     buildCommand: npm install && npm run build
     startCommand: npm run start:prod
