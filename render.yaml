@@ -1,12 +1,12 @@
-services:
+databases:
   # PostgreSQL Database with pgvector
-  - type: pgsql
-    name: scisocial-db
+  - name: scisocial-db
     plan: starter
     databaseName: sci_social_prod
     user: scisocial_user
     ipAllowList: []
 
+services:
   # Redis Cache for Bull queues
   - type: redis
     name: scisocial-redis
