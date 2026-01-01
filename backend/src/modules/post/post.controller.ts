@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import type { Express } from 'express';
 import { extname } from 'path';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
