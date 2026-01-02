@@ -5,6 +5,7 @@ import { Providers } from './providers'
 export const metadata: Metadata = {
   title: 'Scientific Social - Citation-Backed Discourse',
   description: 'Social media platform anchored to peer-reviewed scientific citations',
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
 }
 
 export default function RootLayout({
